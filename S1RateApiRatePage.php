@@ -1,26 +1,25 @@
 <?php
+
 class S1RateApiRatePage extends ApiBase {
-	private $logger;
 
 	public function __construct( ApiMain $mainModule, $moduleName, $modulePrefix = '' ) {
 		parent::__construct( $mainModule, $moduleName, $modulePrefix );
-		$this->logger = new MRLogging( __FILE__ );
 	}
 
 
 	public function execute() {
+        $params = $this->extractRequestParams();
 		$user = $this->getUser();
+        $pageId = $params['pageid'];
+        $score = $params['score'];
 
 		if (!isset( $user )) {
-			$this->logger->debug( __LINE__, 'User is empty' );
 			throw new Exception( 'User is empty' );
 		}
 
-		$pageid = (int)$this->getMain()->getVal('pageid');
-		$score = $this->getMain()->getVal( 'score' );
+		$userId = $user->getId();
 
-		if (!is_int( $pageid )) {
-			$this->logger->error( __LINE__, 'pageid 格式不正确' );
+		if (!is_int( $pageId )) {
 			$this->getResult()->addValue( null, $this->getModuleName(), array(
 					'isSuccess' => 0,
 					'message' => 'pageid 格式不正确'
@@ -29,15 +28,11 @@ class S1RateApiRatePage extends ApiBase {
 		}
 
 
-		$ratingController = new RatingController( $pageid, $user, $this->getRequest()->getIP() );
-
 		try {
-			$result = $ratingController->rate( $score );
+			$result = RatingController::ratePage( $pageId, $userId, $score );
 			$this->getResult()->addValue( null, $this->getModuleName(), $result );
 
 		} catch( Exception $ex) {
-			$this->logger->error( __LINE__, 'Cannot get the rating score, pageid %d', $pageid );
-
 			$this->getResult()->addValue( null, $this->getModuleName(), array(
 					'isSuccess' => 0,
 					'message' => '服务器错误，请稍后再试'
@@ -70,9 +65,6 @@ class S1RateApiRatePage extends ApiBase {
                     ApiBase::PARAM_MIN => -2
                 )
         );
-	}
-
-	public function getExample() {
 	}
 
 }

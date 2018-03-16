@@ -12,8 +12,6 @@
 		"S1RateHooks": "S1Rate.hooks.php",
 		"S1RateApiGetUserScore": "S1RateApiGetUserScore.php",
 		"S1RateApiRatePage": "S1RateApiRatePage.php",
-		"MRLogging": "includes/MRLogging.php",
-		"RatingService": "includes/RatingService.class.php",
 		"RatingController": "includes/RatingController.class.php",
 		"SqlSentences": "includes/SqlSentences.class.php"
 	},

@@ -5,27 +5,49 @@ class RatingController {
 	protected $userid = 0;
 	protected $service;
 	protected $currentUser;
-	private $logger;
 	private $ipAddress;
 
 	public function __construct($pageid, $currentUser, $ipAddress ) {
 		$this->currentUser = $currentUser;
 		$this->userid = $currentUser->getId();
 		$this->pageid = $pageid;
-		$this->service = new RatingService();
 		$this->ipAddress = $ipAddress;
-
-		$this->logger = new MRLogging( __FILE__ );
-
-		$this->logger->trace( __LINE__, 'create RatingController, ratingId: %d, userId: %d, wikiId %d', $this->ratingId, $this->userid, $this->pageid );
 	}
 
-	public function rate( $score ) {
+	public static function ratePage( $pageId, $userId, $score ) {
 		$data = array();
         $score = intval($score);
+        $page = Article::newFromID($pageId);
+        $item = 'item'.(string)($score + 3);
 
 		try {
-			$this->service->ratePage( $this->pageid, $this->userid, $score);
+            $dbw = wfGetDB( DB_MASTER );
+
+            $dbw->startAtomic(__METHOD__);
+            $dbw->insert(
+                's1rate_records',
+                [
+                    'page_id' => $pageId,
+                    'user_id' => $userId,
+                    'score' => $score,
+                ],
+                __METHOD__
+            );
+            $dbw->upsert(
+                's1rate_results',
+                [
+                    'page_id' => $pageId,
+                    'title' => $page->getTitle(),
+                    $item => 1
+                ],
+                [ 'page_id' ],
+                [
+                    $item.' = '.$item.' + 1'
+                ],
+                __METHOD__
+            );
+
+            $dbw->endAtomic( __METHOD__ );
 
 			$data[ 'isSuccess' ] = 1;
 
@@ -36,29 +58,43 @@ class RatingController {
 		}
 	}
 
-	public function getScore() {
-		$data = array();
-
-		if ( !$this->checkRatingContext() ) {
-			return array(
-				'isSuccess' => 0,
-				'message' => '系统错误：无法获取wiki页面信息'
-            );
-		}
+	public static function getUserLastScore($pageId, $userId) {
+		$ret = array();
 
 		try {
-            $data[ 'isSuccess' ] = 1;
-			$data[ 'lastScore' ] = $this->service->getUserLastScore( $this->pageid, $this->userid );
-			$this->logger->debug( __LINE__, 'Rating result, wikiId: %d, totalUsers %d, averageScore %d', $this->pageid, $totalUsers, $averageScore );
-				
-			return $data;
+            $dbr = wfGetDB( DB_SLAVE );
+
+            $output = $dbr->select(
+                's1rate_records',
+                'score',
+                [
+                    'page_id = '.$pageId,
+                    'user_id = '.$userId
+                ],
+                __METHOD__,
+                [
+                    'ORDER BY' => 'id DESC',
+                    'LIMIT' => 1
+                ]
+            );
+
+            if ( $output->numRows() > 0 ) {
+                $result = $output->current();
+                $ret = array(
+                    'lastScore' => $result->score
+                );
+            }else{
+                $ret['isSuccess'] = 0;
+            }
+
+
+			return $ret;
 		
 		} catch ( Exception $ex ) {
-			$this->logger->debug( __LINE__, 'Get Rating total score error: %s', $ex->getMessage() );
-			$data[ 'isSuccess' ] = 0;
-			$data[ 'message' ] = $ex->getMessage();
+			$ret[ 'isSuccess' ] = 0;
+			$ret[ 'message' ] = $ex->getMessage();
 	
-			return $data;
+			return $ret;
 		}
 	}
 
@@ -66,12 +102,10 @@ class RatingController {
 	private function checkRatingContext() {
 		// 
 		if ( !isset( $this->pageid )) {
-			$this->logger->debug( __LINE__, 'wiki Id is empty' );
 			return false;
 		}
 
 		if ( $this->pageid <= 0 ) {
-			$this->logger->debug( __LINE__, 'Wiki id is less than 0' );
 			return false;
 		}
 

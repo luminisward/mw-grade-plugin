@@ -6,9 +6,6 @@ final class S1RateHooks {
 		$output = $skin->getOutput();
 		$request = $skin->getRequest();
 
-
-		MRLogging::logging( MRLogging::$INFO, __FILE__, __LINE__, 'Namespace: '. $pageTitle->getNamespace() );
-
 		if ( $pageTitle->isSpecialPage()
 			|| $pageTitle->getArticleID() == 0
 			|| !$pageTitle->canTalk()
@@ -24,7 +21,6 @@ final class S1RateHooks {
 
 
 		$articleId = $skin->getTitle()->getArticleID();
-		MRLogging::logging( MRLogging::$INFO, __FILE__, __LINE__, 'Moegirl rating show in wiki: ' . $articleId );
 
 		global $wgScriptPath;
 
@@ -153,7 +149,9 @@ EOF;
 	}
 
 	public static function addDatabases( DatabaseUpdater $updater ) {
-		$updater->addExtensionUpdate( array( 'addTable', SqlSentences::$s1rateRecordTable, __DIR__  . '/sql/create-rating-history-table.sql', true ) );
+		$updater->addExtensionUpdate(
+		    array( 'addTable', SqlSentences::$s1rateRecordTable, __DIR__  . '/sql/create-rating-history-table.sql', true )
+        );
 
 		return true;
 	}
