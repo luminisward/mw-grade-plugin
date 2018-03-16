@@ -1,0 +1,54 @@
+{
+	"name": "S1Rate",
+	"version": "0.0.0",
+	"author": [
+		"Fish Thirteen"
+	],
+	"url": "https://github.com/FishThirteen/S1Rate",
+	"description": "自动向首页以外的，所有的条目页面底部插入星级投票",
+	"license-name": "MIT",
+	"type": "parserhook",
+	"AutoloadClasses": {
+		"S1RateHooks": "S1Rate.hooks.php",
+		"S1RateApiGetUserScore": "S1RateApiGetUserScore.php",
+		"S1RateApiRatePage": "S1RateApiRatePage.php",
+		"MRLogging": "includes/MRLogging.php",
+		"RatingService": "includes/RatingService.class.php",
+		"RatingController": "includes/RatingController.class.php",
+		"SqlSentences": "includes/SqlSentences.class.php"
+	},
+	"APIModules": {
+		"GetUserScore": "S1RateApiGetUserScore",
+		"RatePage": "S1RateApiRatePage"
+	},
+	"Hooks": {
+		"SkinAfterContent": [
+			"S1RateHooks::onSkinAfterContent"
+		],
+		"LoadExtensionSchemaUpdates": [
+			"S1RateHooks::addDatabases"
+		]
+	},
+	"MessagesDirs": {
+		"BoilerPlate": [
+			"i18n"
+		]
+	},
+	"ResourceModules": {
+		"ext.S1Rate": {
+			"scripts": [
+				"ext.S1Rate.js"
+			],
+			"styles": [
+				"ext.S1Rate.css"
+			],
+			"messages": [],
+			"dependencies": []
+		}
+	},
+	"ResourceFileModulePaths": {
+		"localBasePath": "resources",
+		"remoteExtPath": "S1Rate/resources"
+	},
+	"manifest_version": 1
+}
