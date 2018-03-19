@@ -1,43 +1,54 @@
 <?php
 
 class RatingController {
-	protected $pageid = 0;
-	protected $userid = 0;
-	protected $service;
-	protected $currentUser;
-	private $ipAddress;
 
-	public function __construct($pageid, $currentUser, $ipAddress ) {
-		$this->currentUser = $currentUser;
-		$this->userid = $currentUser->getId();
-		$this->pageid = $pageid;
-		$this->ipAddress = $ipAddress;
+	public function __construct($pageid, $currentUser ) {
+
 	}
 
-	public static function ratePage( $pageId, $userId, $score ) {
-		$data = array();
+	public static function ratePage(Title $page,User $user, $score ) {
         $score = intval($score);
-        $page = Article::newFromID($pageId);
         $item = 'item'.(string)($score + 3);
 
 		try {
-            $dbw = wfGetDB( DB_MASTER );
 
+            $resultData = self::getUserLastScore($page, $user);
+
+            $dbw = wfGetDB( DB_MASTER );
             $dbw->startAtomic(__METHOD__);
+
             $dbw->insert(
                 's1rate_records',
                 [
-                    'page_id' => $pageId,
-                    'user_id' => $userId,
+                    'page_id' => $page->getArticleID(),
+                    'user_id' => $user->getId(),
+                    'user_name' => $user->getName(),
                     'score' => $score,
                 ],
                 __METHOD__
             );
+
+            if( !empty($resultData) ){
+                $lastScoreItem = 'item'.($resultData['lastScore'] + 3);
+                $dbw->update(
+                    's1rate_results',
+                    [
+                        'page_id' => $page->getArticleId(),
+                        'title' => $page->getSubpageText(),
+                        $lastScoreItem => $lastScoreItem.' - 1'
+                    ],
+                    [
+                        'page_id = '.$page->getArticleID()
+                    ],
+                    __METHOD__
+                );
+            }
+
             $dbw->upsert(
                 's1rate_results',
                 [
-                    'page_id' => $pageId,
-                    'title' => $page->getTitle(),
+                    'page_id' => $page->getArticleId(),
+                    'title' => $page->getSubpageText(),
                     $item => 1
                 ],
                 [ 'page_id' ],
@@ -48,59 +59,90 @@ class RatingController {
             );
 
             $dbw->endAtomic( __METHOD__ );
+            return true;
 
-			$data[ 'isSuccess' ] = 1;
-
-			return $data;
-		
 		} catch ( Exception $ex ) {
-			return array( isSuccess => 0, errorMessage => $ex->getMessage() );
+            throw new Exception('DB Error');
 		}
+
 	}
 
-	public static function getUserLastScore($pageId, $userId) {
+	public static function getUserLastScore(Title $page, User $user) {
 		$ret = array();
 
 		try {
             $dbr = wfGetDB( DB_SLAVE );
 
-            $output = $dbr->select(
+            $result = $dbr->selectRow(
                 's1rate_records',
-                'score',
                 [
-                    'page_id = '.$pageId,
-                    'user_id = '.$userId
+                    'page_id',
+                    'user_name',
+                    'score'
+                ],
+                [
+                    'page_id = '.$page->getArticleId(),
+                    'user_id = '.$user->getId()
                 ],
                 __METHOD__,
                 [
-                    'ORDER BY' => 'id DESC',
-                    'LIMIT' => 1
+                    'ORDER BY' => 'id DESC'
                 ]
             );
 
-            if ( $output->numRows() > 0 ) {
-                $result = $output->current();
+            if ( $result ) {
                 $ret = array(
+                    'pageId' => $result->page_id,
+                    'userName' => $result->user_name,
                     'lastScore' => $result->score
                 );
-            }else{
-                $ret['isSuccess'] = 0;
             }
-
 
 			return $ret;
 		
 		} catch ( Exception $ex ) {
-			$ret[ 'isSuccess' ] = 0;
-			$ret[ 'message' ] = $ex->getMessage();
-	
-			return $ret;
+            throw new Exception('DB Error');
 		}
 	}
 
+    public static function getPageScore(Title $page){
+        $ret = array();
+
+        try {
+            $dbr = wfGetDB( DB_SLAVE );
+
+            $result = $dbr->selectRow(
+                's1rate_results',
+                [
+                    '*',
+                ],
+                [
+                    'page_id = '.$page->getArticleId()
+                ],
+                __METHOD__
+            );
+
+            if ( $result ) {
+                $ret = array(
+                    'pageId' => $result->page_id,
+                    'title' => $result->title,
+                    'item1' => $result->item1,
+                    'item2' => $result->item2,
+                    'item3' => $result->item3,
+                    'item4' => $result->item4,
+                    'item5' => $result->item5
+                );
+            }
+
+            return $ret;
+
+        } catch ( Exception $ex ) {
+            throw new Exception('DB Error');
+        }
+    }
 
 	private function checkRatingContext() {
-		// 
+
 		if ( !isset( $this->pageid )) {
 			return false;
 		}

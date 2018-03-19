@@ -12,12 +12,14 @@
 		"S1RateHooks": "S1Rate.hooks.php",
 		"S1RateApiGetUserScore": "S1RateApiGetUserScore.php",
 		"S1RateApiRatePage": "S1RateApiRatePage.php",
+		"S1RateApiGetPageScore": "S1RateApiGetPageScore.php",
 		"RatingController": "includes/RatingController.class.php",
 		"SqlSentences": "includes/SqlSentences.class.php"
 	},
 	"APIModules": {
 		"GetUserScore": "S1RateApiGetUserScore",
-		"RatePage": "S1RateApiRatePage"
+		"RatePage": "S1RateApiRatePage",
+		"GetPageScore": "S1RateApiGetPageScore"
 	},
 	"Hooks": {
 		"SkinAfterContent": [

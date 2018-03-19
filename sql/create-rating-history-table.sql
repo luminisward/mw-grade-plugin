@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS /*_*/s1rate_records (
   `id` int(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   `page_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
+  `user_name` varbinary(255) NOT NULL,
   `score` tinyint(11) NOT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   INDEX (`page_id`,`user_id`)

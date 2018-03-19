@@ -10,35 +10,34 @@ class S1RateApiRatePage extends ApiBase {
 	public function execute() {
         $params = $this->extractRequestParams();
 		$user = $this->getUser();
-        $pageId = $params['pageid'];
+        $page = Title::newFromID($params['pageid']);
         $score = $params['score'];
 
-		if (!isset( $user )) {
-			throw new Exception( 'User is empty' );
-		}
+        if ( $user->getId() == 0 ) {
+            $this->getResult()->addValue( null, 'code', '1' );
+            $this->getResult()->addValue( null, 'message', 'Can\'t get user' );
+            return true;
+        }
 
-		$userId = $user->getId();
-
-		if (!is_int( $pageId )) {
-			$this->getResult()->addValue( null, $this->getModuleName(), array(
-					'isSuccess' => 0,
-					'message' => 'pageid 格式不正确'
-					));	
-			return true;
-		}
-
+        if (!isset( $page )) {
+            $this->getResult()->addValue( null, 'code', '1' );
+            $this->getResult()->addValue( null, 'message', 'Can\'t find page' );
+            return true;
+        }
 
 		try {
-			$result = RatingController::ratePage( $pageId, $userId, $score );
-			$this->getResult()->addValue( null, $this->getModuleName(), $result );
+            RatingController::ratePage( $page, $user, $score );
+
+            $code = 0;
+            $message = 'Success';
+
+            $this->getResult()->addValue( null, 'code', $code );
+            $this->getResult()->addValue( null, 'message', $message);
 
 		} catch( Exception $ex) {
-			$this->getResult()->addValue( null, $this->getModuleName(), array(
-					'isSuccess' => 0,
-					'message' => '服务器错误，请稍后再试'
-					));
-
-		}	
+            $this->getResult()->addValue( null, 'code', '1' );
+            $this->getResult()->addValue( null, 'message', 'Database Error' );
+		}
 
 		return true;
 		

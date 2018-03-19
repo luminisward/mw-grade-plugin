@@ -1,6 +1,6 @@
 <?php
 
-class S1RateApiGetUserScore extends ApiBase {
+class S1RateApiGetPageScore extends ApiBase {
 
 	public function __construct(ApiMain $mainModule, $moduleName, $modulePrefix= '') {
 		parent::__construct( $mainModule, $moduleName, $modulePrefix );
@@ -9,14 +9,7 @@ class S1RateApiGetUserScore extends ApiBase {
 
 	public function execute() {
         $params = $this->extractRequestParams();
-        $user = User::newFromName($params['target']);
         $page = Title::newFromID($params['pageid']);
-
-        if ( $user->getId() == 0 ) {
-            $this->getResult()->addValue( null, 'message', 'Can\'t get user' );
-            $this->getResult()->addValue( null, 'code', '1' );
-            return true;
-		}
 
 		if (!isset( $page )) {
             $this->getResult()->addValue( null, 'message', 'Can\'t find page' );
@@ -25,7 +18,7 @@ class S1RateApiGetUserScore extends ApiBase {
 		}
 
 		try {
-			$resultData = RatingController::getUserLastScore( $page, $user );
+			$resultData = RatingController::getPageScore( $page );
 			if( empty($resultData) ){
 			    $code = 1;
 			    $message = 'No result';
@@ -54,11 +47,7 @@ class S1RateApiGetUserScore extends ApiBase {
 			'pageid' => array (
 				ApiBase::PARAM_TYPE => 'integer',
 				ApiBase::PARAM_REQUIRED => true
-			),
-            'target' => array(
-                ApiBase::PARAM_TYPE => 'user',
-                ApiBase::PARAM_REQUIRED => true
-            )
+			)
         );
 	}
 }
