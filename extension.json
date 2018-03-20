@@ -10,6 +10,7 @@
 	"type": "parserhook",
 	"AutoloadClasses": {
 		"S1RateHooks": "S1Rate.hooks.php",
+		"S1RateBuildHTML": "S1RateBuildHTML.php",
 		"S1RateApiGetUserScore": "S1RateApiGetUserScore.php",
 		"S1RateApiRatePage": "S1RateApiRatePage.php",
 		"S1RateApiGetPageScore": "S1RateApiGetPageScore.php",
@@ -22,8 +23,8 @@
 		"GetPageScore": "S1RateApiGetPageScore"
 	},
 	"Hooks": {
-		"SkinAfterContent": [
-			"S1RateHooks::onSkinAfterContent"
+		"BeforePageDisplay": [
+			"S1RateHooks::onBeforePageDisplay"
 		],
 		"LoadExtensionSchemaUpdates": [
 			"S1RateHooks::addDatabases"

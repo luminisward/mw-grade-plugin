@@ -1,9 +1,8 @@
 <?php
 
 final class S1RateHooks {
-	public static function onSkinAfterContent( &$data,Skin $skin ) {
+	public static function onBeforePageDisplay( OutputPage &$out, Skin &$skin ) {
 		$pageTitle = $skin->getTitle();
-		$output = $skin->getOutput();
 		$request = $skin->getRequest();
 
 		if ( $pageTitle->isSpecialPage()
@@ -12,76 +11,18 @@ final class S1RateHooks {
 			|| $pageTitle->isTalkPage()
 			|| method_exists( $pageTitle, 'isMainPage' ) && $pageTitle->isMainPage() // 主页
 			|| in_array( $pageTitle->getNamespace(), array( NS_MEDIAWIKI, NS_TEMPLATE, NS_CATEGORY, NS_FILE, NS_USER ))
-			|| $output->isPrintable()
-			|| $request->getVal( 'action', 'view' ) != 'view' 
+			|| $out->isPrintable()
+			|| $request->getVal( 'action', 'view' ) != 'view'
 			) {
 
 			return true;
 		}
 
+		$html = new S1RateBuildHTML($pageTitle);
+		$html->init();
 
-		$articleId = $skin->getTitle()->getArticleID();
-
-		global $wgScriptPath;
-
-		$htmlContent = '';
-
-		$arr = array(1,2,3,4,5);
-		$textArr = array(
-		    '1' => '+2 - 极力推荐',
-            '2' => '+1 - 值得一看',
-            '3' => 'x0 - 看完就删',
-            '4' => '-1 - 不太喜欢',
-            '5' => '-2 - 感觉太差'
-        );
-		$items = array_map(
-		    function($item){return Html::rawElement('span',[],$item);},
-            $textArr
-        );
-
-        $resultData = RatingController::getPageScore( $pageTitle );
-
-        for($i=1; $i<=5; $i++) {
-            $items[$i] .= Html::rawElement(
-                'span',
-                [
-                    'id' => 'sri'.$i
-                ],
-                $resultData['item'.$i]
-            );
-		}
-
-		$items = array_map(
-            function($item){return Html::rawElement('div',[],$item);},
-            $items
-        );
-
-        $htmlContent .= array_reduce($items, function($carry, $item){$carry .= $item;return $carry;});
-
-        $htmlContent = Html::rawElement(
-		    'form',
-            [
-                'id' => 's1rateform'
-            ],
-            $htmlContent
-        );
-
-
-
-
-
-
-
-        $loadJs = '(window.RLQ=window.RLQ||[]).push(function(){mw.loader.load(\'ext.S1Rate\')});';
-		$loadJs = Html::rawElement(
-		    'script',
-            [],
-            $loadJs
-        );
-		$htmlContent .= $loadJs;
-
-        $output->addModules('ext.S1Rate');
-		$data .= $htmlContent;
+        $out->prependHTML($html->getHtmlContent());
+        $out->addModules('ext.S1Rate');
 
 		return true;
 	}

@@ -8,7 +8,7 @@ class RatingController {
 
 	public static function ratePage(Title $page,User $user, $score ) {
         $score = intval($score);
-        $item = 'item'.(string)($score + 3);
+        $item = 'item'.(string)(3- $score);
 
 		try {
 
@@ -29,13 +29,13 @@ class RatingController {
             );
 
             if( !empty($resultData) ){
-                $lastScoreItem = 'item'.($resultData['lastScore'] + 3);
+                $lastScoreItem = 'item'.(3 - $resultData['lastScore']);
                 $dbw->update(
                     's1rate_results',
                     [
                         'page_id' => $page->getArticleId(),
                         'title' => $page->getSubpageText(),
-                        $lastScoreItem => $lastScoreItem.' - 1'
+                        $lastScoreItem.'='.$lastScoreItem.'-1'
                     ],
                     [
                         'page_id = '.$page->getArticleID()
