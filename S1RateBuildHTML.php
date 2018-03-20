@@ -21,6 +21,7 @@ class S1RateBuildHTML
 
     public function init()
     {
+        global $wgRateInterval;
         $items = [];
 
         // construct radio
@@ -52,7 +53,7 @@ class S1RateBuildHTML
             $items
         );
 
-        $this->htmlContent .= array_reduce($items, array($this, 'mergetext'));
+        $this->htmlContent .= array_reduce($items, array($this, 'mergeText'));
 
         $this->htmlContent .= Html::submitButton('sm',[]);
 
@@ -63,6 +64,7 @@ class S1RateBuildHTML
             ],
             $this->htmlContent
         );
+        $this->htmlContent .= '<script>var RateInterval = '.$wgRateInterval.'</script>';
     }
 
     public function getHtmlContent(){

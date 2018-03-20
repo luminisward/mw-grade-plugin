@@ -13,7 +13,6 @@ function fetchData(){
         datatype: 'json'
         })
         .done (function( response ) {
-            console.log(response)
             if ( response.code ) {
                 console.log( response.message );
                 return;
@@ -26,7 +25,26 @@ function fetchData(){
             console.log( 'connection error' );
         })
 }
-// alert("Submitted");
+
+function fetchMyRate() {
+    $.ajax({
+        url: apiPath,
+        type: 'GET',
+        data: {
+            action: 'GetUserScore',
+            format: 'json',
+            pageid: pageid,
+            target: mw.config.get('wgUserName')
+        },
+        datatype: 'json'
+    }).done (function(response) {
+        var data = response.data;
+        $('input[type="radio"][name="s1rateoption"][value='+ data.lastScore + ']').attr("checked","checked");
+        if( new Date().getTime() / 1000 - data.date < RateInterval ){
+            $('#s1rateform input:radio').attr('disabled',true);
+        }
+    })
+}
 
 function fetchToken(){
     $.ajax({
@@ -41,7 +59,6 @@ function fetchToken(){
         datatype: 'json'
     }).done (function(response) {
         var token = response.query.tokens.csrftoken;
-        console.log(token);
         $('#s1rateform').attr('token', token);
     })
 }
@@ -64,6 +81,7 @@ function submitData(){
     }).done (function(response) {
         console.log(response);
         fetchData();
+        fetchMyRate();
     })
 }
 
@@ -75,4 +93,4 @@ $('#s1rateform').submit(
 )
 
 fetchToken();
-// fetchData();
+fetchMyRate();

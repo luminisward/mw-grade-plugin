@@ -8,12 +8,15 @@ class RatingController {
 
 	public static function ratePage(Title $page,User $user, $score ) {
         $score = intval($score);
-        $item = 'item'.(string)(3- $score);
+        $item = 'item'.(string)(3 - $score);
+        global $wgRateInterval;
 
 		try {
 
             $resultData = self::getUserLastScore($page, $user);
-
+            if ( time() - $resultData['date'] < $wgRateInterval ){
+                return false;
+            }
             $dbw = wfGetDB( DB_MASTER );
             $dbw->startAtomic(__METHOD__);
 
@@ -78,7 +81,8 @@ class RatingController {
                 [
                     'page_id',
                     'user_name',
-                    'score'
+                    'score',
+                    'unix_timestamp(date)'
                 ],
                 [
                     'page_id = '.$page->getArticleId(),
@@ -94,7 +98,8 @@ class RatingController {
                 $ret = array(
                     'pageId' => $result->page_id,
                     'userName' => $result->user_name,
-                    'lastScore' => $result->score
+                    'lastScore' => $result->score,
+                    'date' => $result->{'unix_timestamp(date)'}
                 );
             }
 

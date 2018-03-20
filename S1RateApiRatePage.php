@@ -26,10 +26,15 @@ class S1RateApiRatePage extends ApiBase {
         }
 
 		try {
-            RatingController::ratePage( $page, $user, $score );
+            if ( RatingController::ratePage( $page, $user, $score ) ){
+                $code = 0;
+                $message = 'Success';
+            }else{
+                $code = 1;
+                $message = 'Request interval too short';
+            }
 
-            $code = 0;
-            $message = 'Success';
+
 
             $this->getResult()->addValue( null, 'code', $code );
             $this->getResult()->addValue( null, 'message', $message);

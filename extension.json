@@ -30,6 +30,9 @@
 			"S1RateHooks::addDatabases"
 		]
 	},
+	"config": {
+		"RateInterval": "10"
+	},
 	"MessagesDirs": {
 		"BoilerPlate": [
 			"i18n"
