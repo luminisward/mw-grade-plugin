@@ -5,6 +5,53 @@
    height: 0;
    clear: both;
 }
+#s1rateform {
+   width: 50%;
+}
+
 #s1rateform label {
     cursor: pointer;
+    float: right;
+    line-height: 1.6em;
+}
+#s1rateform .option {
+    height: 1em;
+    width: 8em;
+    vertical-align: top;
+    float: left;
+}
+#s1rateform .progress {
+    overflow: hidden;
+}
+#s1rateform .percent {
+    width: 2em;
+    float: right;
+    vertical-align: top;
+    margin-left: 1em;
+    margin-right: 1em;
+}
+#s1rateform .totalcount {
+    margin-left: 1em
+}
+
+#s1rateform div:nth-of-type(1) .progress .meter {
+    background-color: #4fcafe;
+}
+#s1rateform div:nth-of-type(2) .progress .meter {
+    background-color: #89d923;
+}
+#s1rateform div:nth-of-type(3) .progress .meter {
+    background-color: #f2c31f;
+}
+#s1rateform div:nth-of-type(4) .progress .meter {
+    background-color: #f96d1e;
+}
+#s1rateform div:nth-of-type(5) .progress .meter {
+    background-color: #d30326;
+}
+
+@media only screen and (max-width: 60em) {
+    #s1rateform {
+        width: 100%;
+     }
 }

@@ -131,11 +131,13 @@ class RatingController {
                 $ret = array(
                     'pageId' => $result->page_id,
                     'title' => $result->title,
-                    'item1' => $result->item1,
-                    'item2' => $result->item2,
-                    'item3' => $result->item3,
-                    'item4' => $result->item4,
-                    'item5' => $result->item5
+                    'results' => array(
+                        'item1' => $result->item1,
+                        'item2' => $result->item2,
+                        'item3' => $result->item3,
+                        'item4' => $result->item4,
+                        'item5' => $result->item5
+                    )
                 );
             }
 
