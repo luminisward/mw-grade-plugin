@@ -63,7 +63,7 @@ class S1RateBuildHTML
                 'div',
                 [
                     'class' => 'option',
-                    'style' => 'float: left'
+                    'style' => 'float: left;height:2em'
                 ],
                 $items[$key]
             );

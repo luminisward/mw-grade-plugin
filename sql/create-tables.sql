@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS /*_*/s1rate_results (
   `page_id` int(10) UNSIGNED NOT NULL PRIMARY KEY ,
   `title` varbinary(255) NOT NULL ,
-  `item1` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `item2` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `item3` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `item4` int(10) UNSIGNED NOT NULL DEFAULT '0',
-  `item5` int(10) UNSIGNED NOT NULL DEFAULT '0',
+  `item1` int(10) NOT NULL DEFAULT '0',
+  `item2` int(10) NOT NULL DEFAULT '0',
+  `item3` int(10) NOT NULL DEFAULT '0',
+  `item4` int(10) NOT NULL DEFAULT '0',
+  `item5` int(10) NOT NULL DEFAULT '0',
   INDEX (`title`)
 ) /*$wgDBTableOptions*/;
 

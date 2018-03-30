@@ -70,7 +70,7 @@ class RatingController {
 
 	}
 
-	public static function getUserLastScore(Title $page, User $user) {
+	public static function getUserLastScore(Title $page, $user) {
 		$ret = array();
 
 		try {
@@ -85,8 +85,8 @@ class RatingController {
                     'unix_timestamp(date)'
                 ],
                 [
-                    'page_id = '.$page->getArticleId(),
-                    'user_id = '.$user->getId()
+                    'page_id' => $page->getArticleId(),
+                    'user_name' => $user
                 ],
                 __METHOD__,
                 [
@@ -122,7 +122,7 @@ class RatingController {
                     '*',
                 ],
                 [
-                    'page_id = '.$page->getArticleId()
+                    'page_id' => $page->getArticleId()
                 ],
                 __METHOD__
             );

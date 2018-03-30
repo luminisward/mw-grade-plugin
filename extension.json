@@ -1,12 +1,10 @@
 {
 	"name": "S1Rate",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"author": [
-		"Fish Thirteen"
+		"saraba1st"
 	],
-	"url": "https://github.com/FishThirteen/S1Rate",
-	"description": "自动向首页以外的，所有的条目页面底部插入星级投票",
-	"license-name": "MIT",
+	"description": "向文章开头插入评分模块",
 	"type": "parserhook",
 	"AutoloadClasses": {
 		"S1RateHooks": "S1Rate.hooks.php",
@@ -31,12 +29,7 @@
 		]
 	},
 	"config": {
-		"RateInterval": "10"
-	},
-	"MessagesDirs": {
-		"BoilerPlate": [
-			"i18n"
-		]
+		"RateInterval": "86400"
 	},
 	"ResourceModules": {
 		"ext.S1Rate": {

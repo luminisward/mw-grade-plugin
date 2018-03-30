@@ -32,7 +32,7 @@ function fetchResult(){
 
         var percents = $('.percent')
         percents.map(function(index, domElement){
-            domElement.innerText = (results[index] / totolCount * 100).toFixed(1) + '%'
+            domElement.innerText = (results[index] / totolCount * 100).toFixed(1) + '% (' + results[index] + ')'
         })
         
         $('#s1rateform .totalcount').text('共有 '+ totolCount +' 人参与评分')

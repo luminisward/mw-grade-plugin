@@ -9,14 +9,8 @@ class S1RateApiGetUserScore extends ApiBase {
 
 	public function execute() {
         $params = $this->extractRequestParams();
-        $user = User::newFromName($params['target']);
+        $user = $params['target'];
         $page = Title::newFromID($params['pageid']);
-
-        if ( $user->getId() == 0 ) {
-            $this->getResult()->addValue( null, 'message', 'Can\'t get user' );
-            $this->getResult()->addValue( null, 'code', '1' );
-            return true;
-		}
 
 		if (!isset( $page )) {
             $this->getResult()->addValue( null, 'message', 'Can\'t find page' );

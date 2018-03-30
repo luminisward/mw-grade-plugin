@@ -1,10 +1,3 @@
-.clearfix:after {
-   content: " "; /* Older browser do not support empty content */
-   visibility: hidden;
-   display: block;
-   height: 0;
-   clear: both;
-}
 #s1rateform {
    width: 50%;
 }
@@ -15,16 +8,13 @@
     line-height: 1.6em;
 }
 #s1rateform .option {
-    height: 1em;
     width: 8em;
-    vertical-align: top;
-    float: left;
 }
 #s1rateform .progress {
     overflow: hidden;
 }
 #s1rateform .percent {
-    width: 2em;
+    width: 6em;
     float: right;
     vertical-align: top;
     margin-left: 1em;
@@ -33,7 +23,6 @@
 #s1rateform .totalcount {
     margin-left: 1em
 }
-
 #s1rateform div:nth-of-type(1) .progress .meter {
     background-color: #4fcafe;
 }
@@ -50,7 +39,7 @@
     background-color: #d30326;
 }
 
-@media only screen and (max-width: 60em) {
+@media only screen and (max-width: 75em) {
     #s1rateform {
         width: 100%;
      }

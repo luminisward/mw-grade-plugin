@@ -29,7 +29,7 @@ final class S1RateHooks {
 
 	public static function addDatabases( DatabaseUpdater $updater ) {
 		$updater->addExtensionUpdate(
-		    array( 'addTable', SqlSentences::$s1rateRecordTable, __DIR__  . '/sql/create-rating-history-table.sql', true )
+		    array( 'addTable', SqlSentences::$s1rateRecordTable, __DIR__  . '/sql/create-tables.sql', true )
         );
 
 		return true;
